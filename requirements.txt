@@ -1,0 +1,5 @@
+numpy
+pytest
+pytest-runner
+cython
+click
