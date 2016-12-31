@@ -6,6 +6,7 @@ import numpy
 from three_sat.models import Instance
 from three_sat.models import Solution
 from .generator import generate_instance
+from .algorithms import solve_genetic
 
 
 @click.group()
@@ -55,8 +56,7 @@ def solve(in_path):
         return
 
     for instance in instances:
-        assignments = numpy.random.choice([0, 1], instance.variables)
-        solution = Solution(instance, assignments, 50)
+        solution = solve_genetic(instance)
         print(str(solution))
 
 

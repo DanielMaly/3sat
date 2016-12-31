@@ -90,6 +90,6 @@ def solve(python_instance, **kwargs):
 
 
 cdef Solution genetic(Instance instance, dict options):
-    cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments = numpy.random.choice([0, 1], instance.variables)
+    cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments = numpy.random.choice(numpy.array([0, 1], dtype=numpy.int8), instance.num_variables)
     cdef Solution solution = Solution(instance, assignments, options)
     return solution
