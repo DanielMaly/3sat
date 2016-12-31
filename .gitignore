@@ -2,3 +2,6 @@
 dist
 env_3sat
 .idea
+*.so
+*.o
+*.c

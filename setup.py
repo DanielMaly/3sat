@@ -4,7 +4,7 @@ import numpy
 
 setup(
     name='3sat',
-    # ext_modules=cythonize('algorithms/*.pyx', language_level=3, include_dirs=[numpy.get_include()]),
+    ext_modules=cythonize('three_sat/algorithms/*.pyx', language_level=3, include_dirs=[numpy.get_include()]),
     include_dirs=[numpy.get_include()],
     install_requires=[
         'Cython',
