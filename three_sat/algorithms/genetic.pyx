@@ -18,16 +18,17 @@ _default_options = {
 
 
 @cython.boundscheck(False)
-cdef int clause_contains(int v, numpy.ndarray[numpy.int64_t, ndim=1] clause):
+cdef int satisfies_clause(numpy.ndarray[numpy.int64_t, ndim=1] clause,
+                          numpy.ndarray[numpy.int8_t, ndim=1] assignment):
     cdef int i
-
     for i in range(len(clause)):
-        if clause[i] == v:
+        if clause[i] < 0 and not assignment[-clause[i]-1]:
             return True
-        elif abs(clause[i]) > abs(v):
-            return False
+        elif clause[i] > 0 and assignment[clause[i]-1]:
+            return True
 
     return False
+
 
 
 cdef class Instance:
@@ -72,11 +73,11 @@ cdef class Solution:
                 self.value += self.instance.weights[i]
 
             for c in range(self.instance.num_clauses):
-                failed_1 = self.assignments[i] and clause_contains(-i, self.instance.clauses[c])
-                failed_0 = not self.assignments[i] and clause_contains(i, self.instance.clauses[c])
-                if failed_0 or failed_1:
+                if not satisfies_clause(self.instance.clauses[c], self.assignments):
                     self.satisfies = False
                     break
+
+
 
     cpdef int fitness(self):
         cdef int fitness = self.value
@@ -84,6 +85,8 @@ cdef class Solution:
             fitness -= self.options['no_satisfy_penalty']
         return fitness
 
+    def __str__(self):
+        return ' '.join([str(x) for x in self.assignments])
 
 def solve(python_instance, **kwargs):
 
