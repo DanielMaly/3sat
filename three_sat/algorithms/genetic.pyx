@@ -1,8 +1,12 @@
+#!python
+#cython: language_level=3, boundscheck=False
+
 import cython
 import numpy
 cimport numpy
 import random
 from three_sat.models import Solution as OutputSolution
+from libc.stdlib cimport malloc, free
 
 _default_options = {
     'population_size': 50,
@@ -17,7 +21,6 @@ _default_options = {
 }
 
 
-@cython.boundscheck(False)
 cdef int satisfies_clause(numpy.ndarray[numpy.int64_t, ndim=1] clause,
                           numpy.ndarray[numpy.int8_t, ndim=1] assignment):
     cdef int i
@@ -51,7 +54,7 @@ cdef class Solution:
     cdef Instance instance
     cdef numpy.ndarray assignments
     cdef int value
-    cdef int satisfies
+    cdef int unsatisfied_clauses
     cdef dict options
 
     def __cinit__(self, Instance instance, numpy.ndarray[numpy.int8_t, ndim=1] assignments, dict options):
@@ -60,33 +63,61 @@ cdef class Solution:
         self.options = options
         self.analyze_me()
 
-    @cython.boundscheck(False)
     cdef analyze_me(self):
         cdef int i, v, c, a, failed_0, failed_1, satisfies
 
         # Calculate the sum of weights of variables having been assigned 1
-        # Verify that all clauses are satisfied
         self.value = 0
-        self.satisfies = True
         for i in range(self.instance.num_variables):
             if self.assignments[i] == 1:
                 self.value += self.instance.weights[i]
 
-            for c in range(self.instance.num_clauses):
-                if not satisfies_clause(self.instance.clauses[c], self.assignments):
-                    self.satisfies = False
-                    break
-
-
+        # Verify that all clauses are satisfied
+        self.unsatisfied_clauses = 0
+        for c in range(self.instance.num_clauses):
+            if not satisfies_clause(self.instance.clauses[c], self.assignments):
+                self.unsatisfied_clauses += 1
 
     cpdef int fitness(self):
-        cdef int fitness = self.value
-        if not self.satisfies:
-            fitness -= self.options['no_satisfy_penalty']
-        return fitness
+        if self.unsatisfied_clauses == 0:
+            return self.value
+        else:
+            return -self.unsatisfied_clauses
 
     def __str__(self):
         return ' '.join([str(x) for x in self.assignments])
+
+
+cdef struct RunStatistics:
+    int number_of_generations
+    int best_solution_fitness
+
+
+cdef class Population:
+    cdef dict options
+    cdef int size
+    cdef Solution** individuals
+    cdef int filled
+
+    def __cinit__(self, dict options):
+        self.options = options
+        self.size = options['population_size']
+        self.filled = 0
+        self.individuals = <Solution **> malloc(self.size * sizeof(Solution*))
+
+    cdef add_individual(self, Solution* solution):
+        self.individuals[self.filled] = solution
+        self.filled += 1
+
+    cdef Solution* get_random_individual(self):
+        return self.individuals[random.randrange(0,self.size)]
+    
+    cdef sort_by_fitness(self):
+        pass
+
+    cdef reset(self):
+        pass
+
 
 def solve(python_instance, **kwargs):
 
@@ -98,11 +129,15 @@ def solve(python_instance, **kwargs):
     cdef Instance instance = Instance(python_instance)
 
     # Generate a solution and convert it to Python
-    cdef Solution solution = genetic(instance, options)
-    return OutputSolution(python_instance, solution.assignments, solution.value)
+    cdef RunStatistics run_statistics
+    cdef Solution solution = genetic(instance, options, &run_statistics)
+    return OutputSolution(python_instance, solution.assignments, solution.value, {
+        'number_of_generations': run_statistics.number_of_generations,
+        'best_solution_fitness': run_statistics.best_solution_fitness
+    })
 
 
-cdef Solution genetic(Instance instance, dict options):
+cdef Solution genetic(Instance instance, dict options, RunStatistics* run_statistics):
 
     cdef int terminate = False
     cdef Solution best_solution
@@ -156,7 +191,8 @@ cdef Solution genetic(Instance instance, dict options):
         if generations >= options['max_generations']:
             terminate = True
 
-    print('\nSolved an instance in {} generations.'.format(generations))
+    run_statistics.number_of_generations = generations
+    run_statistics.best_solution_fitness = best_solution.fitness()
 
     return best_solution
 
@@ -192,7 +228,7 @@ cdef mutate_assignments(numpy.ndarray[numpy.int8_t, ndim=1] assignments, dict op
             assignments[i] = not assignments[i]
 
 
-cdef tournament_select(list population, dict options):
+cdef Solution tournament_select(list population, dict options):
     cdef int i
     cdef float res
     cdef list tournament_pool = [population[random.randrange(0,len(population))] for i in range(options['tournament_pool_size'])]

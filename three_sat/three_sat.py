@@ -1,10 +1,9 @@
 import os
 import click
 import glob
-import numpy
+import time
 
 from three_sat.models import Instance
-from three_sat.models import Solution
 from .generator import generate_instance
 from .algorithms import solve_genetic
 
@@ -55,9 +54,17 @@ def solve(in_path):
         print('ERROR: path {} not found'.format(in_path))
         return
 
+    total_time = 0
     for instance in instances:
+        start_time = time.clock()
         solution = solve_genetic(instance)
-        print(str(solution))
+        end_time = time.clock()
+        time_taken = end_time - start_time
+        total_time += time_taken
+        print('{} in {:.2f} s'.format(str(solution), time_taken))
+
+    average_time = total_time / len(instances)
+    print('Average time: {:.2f} s'.format(average_time))
 
 
 def load_instances_from_directory(directory):
