@@ -33,7 +33,6 @@ cdef int satisfies_clause(numpy.ndarray[numpy.int64_t, ndim=1] clause,
     return False
 
 
-
 cdef class Instance:
     cdef numpy.ndarray weights
     cdef numpy.ndarray clauses
@@ -91,32 +90,6 @@ cdef class Solution:
 cdef struct RunStatistics:
     int number_of_generations
     int best_solution_fitness
-
-
-cdef class Population:
-    cdef dict options
-    cdef int size
-    cdef Solution** individuals
-    cdef int filled
-
-    def __cinit__(self, dict options):
-        self.options = options
-        self.size = options['population_size']
-        self.filled = 0
-        self.individuals = <Solution **> malloc(self.size * sizeof(Solution*))
-
-    cdef add_individual(self, Solution* solution):
-        self.individuals[self.filled] = solution
-        self.filled += 1
-
-    cdef Solution* get_random_individual(self):
-        return self.individuals[random.randrange(0,self.size)]
-    
-    cdef sort_by_fitness(self):
-        pass
-
-    cdef reset(self):
-        pass
 
 
 def solve(python_instance, **kwargs):
@@ -199,8 +172,8 @@ cdef Solution genetic(Instance instance, dict options, RunStatistics* run_statis
 
 cdef list breed_solutions(list population, Instance instance, dict options):
     # Select parents
-    cdef Solution parent1 = tournament_select(population, options)
-    cdef Solution parent2 = tournament_select(population, options)
+    cdef Solution parent1 = c_tournament_select(population, options)
+    cdef Solution parent2 = c_tournament_select(population, options)
 
     # Crossover
     cdef int crossover_point = random.randrange(1, instance.size() - 1)
@@ -219,6 +192,7 @@ cdef list breed_solutions(list population, Instance instance, dict options):
     return [Solution(instance, assignments1, options), Solution(instance, assignments2, options)]
 
 
+
 cdef mutate_assignments(numpy.ndarray[numpy.int8_t, ndim=1] assignments, dict options):
     cdef int i
     cdef float res
@@ -226,6 +200,25 @@ cdef mutate_assignments(numpy.ndarray[numpy.int8_t, ndim=1] assignments, dict op
         res = random.uniform(0, 1)
         if options['mutation_probability'] >= res:
             assignments[i] = not assignments[i]
+
+
+cdef Solution c_tournament_select(list population, dict options):
+    cdef int i
+    cdef float res
+    cdef int pool_size = options['tournament_pool_size']
+    cdef Solution champion = population[random.randrange(0,len(population))]
+    cdef Solution challenger
+
+    for i in range(pool_size):
+        challenger = population[random.randrange(0,len(population))]
+        if challenger.fitness() > champion.fitness():
+            champion = challenger
+
+    res = random.uniform(0, 1)
+    if options['tournament_win_probability'] >= res:
+        return champion
+    else:
+        return challenger
 
 
 cdef Solution tournament_select(list population, dict options):
@@ -246,3 +239,4 @@ cdef Solution generate_random_solution(Instance instance, dict options):
     assignments = numpy.random.choice(numpy.array([0, 1], dtype=numpy.int8), instance.num_variables)
     cdef Solution solution = Solution(instance, assignments, options)
     return solution
+
