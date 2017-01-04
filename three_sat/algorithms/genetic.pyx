@@ -113,7 +113,7 @@ def solve(python_instance, **kwargs):
     # Generate a solution and convert it to Python
     cdef RunStatistics run_statistics
     cdef Solution solution = genetic(instance, options, &run_statistics)
-    return OutputSolution(python_instance, solution.assignments, solution.value, solution.fitness(), {
+    return OutputSolution(python_instance, solution.assignments, solution.value, solution.unsatisfied_clauses, {
         'number_of_generations': run_statistics.number_of_generations
     })
 
@@ -192,20 +192,21 @@ cdef list breed_solutions(list population, Instance instance, dict options):
         parent2 = tournament_select_pool(population, options)
 
     # Crossover
+    cdef int i, tmp, crossover_point
     cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments1
     cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments2
+    cdef numpy.ndarray[numpy.int8_t, ndim=1] crossover_map
     assignments1 = parent1.assignments.copy()
     assignments2 = parent2.assignments.copy()
-    
+
     if options['crossover'] == CROSSOVER_SINGLE_POINT:
-        cdef int crossover_point = random.randrange(1, instance.size() - 1)
+        crossover_point = random.randrange(1, instance.size() - 1)
 
         assignments1[crossover_point:] = parent2.assignments[crossover_point:]
         assignments2[:crossover_point] = parent1.assignments[:crossover_point]
 
     elif options['crossover'] == CROSSOVER_SWAP_MAP:
-        cdef numpy.ndarray[numpy.int8_t, ndim=1] crossover_map = generate_random_assignments(len(parent1.assignments))
-        cdef int i, tmp
+        crossover_map = generate_random_assignments(len(parent1.assignments))
         for i in range(len(parent1.assignments)):
             if crossover_map[i] == 1:
                 tmp = assignments1[i]

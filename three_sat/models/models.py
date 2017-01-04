@@ -47,7 +47,7 @@ class Solution:
         self.assignments = assignments
         self.value = value
         self.statistics = statistics
-        self.unsatisfied = 0
+        self.unsatisfied = unsatisfied
 
     def fitness(self):
         if self.unsatisfied == 0:

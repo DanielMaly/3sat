@@ -65,7 +65,7 @@ def solve(in_path):
         time_taken = end_time - start_time
         total_time += time_taken
         total_fitness += solution.fitness()
-        if total_fitness > 0:
+        if solution.fitness() > 0:
             total_value += solution.value
         else:
             unsolved_instances += 1
