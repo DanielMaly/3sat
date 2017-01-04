@@ -1,0 +1,25 @@
+_default_options = {
+    'population_size': 200,
+    'mutation_probability': 0.02,
+    'tournament_pool_size': 4,
+    'tournament_win_probability': 0.9,
+    'elitism_size': 7,
+    'max_best_solution_age': 100,
+    'max_generations': 1000,
+    'no_satisfy_penalty': 5000,
+    'random_individuals_inserted': 5,
+    'selection': TOURNAMENT_TYPE_KNOCKOUT,
+    'crossover': CROSSOVER_SINGLE_POINT
+}
+
+
+
+Medium instances:
+
+Average time: 5.91 s
+Unsolved instances: 0
+Average fitness: 497.46
+Total fitness: 24873
+Average good solution value: 497.46
+
+Large instances:

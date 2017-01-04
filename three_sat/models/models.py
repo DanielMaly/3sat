@@ -42,14 +42,21 @@ class Instance:
 
 
 class Solution:
-    def __init__(self, instance, assignments, value, statistics):
+    def __init__(self, instance, assignments, value, unsatisfied, statistics):
         self.instance = instance
         self.assignments = assignments
         self.value = value
         self.statistics = statistics
+        self.unsatisfied = 0
+
+    def fitness(self):
+        if self.unsatisfied == 0:
+            return self.value
+        else:
+            return -self.unsatisfied
 
     def __str__(self, *args, **kwargs):
         assignments = ' '.join([str(x) for x in self.assignments])
         return ' | '.join([self.instance.identifier, assignments, str(self.value),
-                           str(self.statistics['number_of_generations']),
-                           str(self.statistics['best_solution_fitness'])])
+                           str(self.fitness()),
+                           str(self.statistics['number_of_generations'])])

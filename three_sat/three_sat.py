@@ -55,16 +55,29 @@ def solve(in_path):
         return
 
     total_time = 0
+    total_fitness = 0
+    total_value = 0
+    unsolved_instances = 0
     for instance in instances:
         start_time = time.clock()
         solution = solve_genetic(instance)
         end_time = time.clock()
         time_taken = end_time - start_time
         total_time += time_taken
+        total_fitness += solution.fitness()
+        if total_fitness > 0:
+            total_value += solution.value
+        else:
+            unsolved_instances += 1
+
         print('{} in {:.2f} s'.format(str(solution), time_taken))
 
     average_time = total_time / len(instances)
     print('Average time: {:.2f} s'.format(average_time))
+    print('Unsolved instances: {}'.format(unsolved_instances))
+    print('Average fitness: {:.2f}'.format(total_fitness / len(instances)))
+    print('Total fitness: {}'.format(total_fitness))
+    print('Average good solution value: {}'.format(total_value / (len(instances) - unsolved_instances)))
 
 
 def load_instances_from_directory(directory):

@@ -8,8 +8,16 @@ import random
 from three_sat.models import Solution as OutputSolution
 from libc.stdlib cimport malloc, free
 
+
+TOURNAMENT_TYPE_KNOCKOUT = 'knockout'
+TOURNAMENT_TYPE_POOL = 'pool'
+
+CROSSOVER_SINGLE_POINT = 'single_point'
+CROSSOVER_SWAP_MAP = 'swap_map'
+
+
 _default_options = {
-    'population_size': 50,
+    'population_size': 200,
     'mutation_probability': 0.02,
     'tournament_pool_size': 4,
     'tournament_win_probability': 0.9,
@@ -17,7 +25,9 @@ _default_options = {
     'max_best_solution_age': 100,
     'max_generations': 1000,
     'no_satisfy_penalty': 5000,
-    'random_individuals_inserted': 5
+    'random_individuals_inserted': 5,
+    'selection': TOURNAMENT_TYPE_KNOCKOUT,
+    'crossover': CROSSOVER_SINGLE_POINT
 }
 
 
@@ -89,7 +99,6 @@ cdef class Solution:
 
 cdef struct RunStatistics:
     int number_of_generations
-    int best_solution_fitness
 
 
 def solve(python_instance, **kwargs):
@@ -104,9 +113,8 @@ def solve(python_instance, **kwargs):
     # Generate a solution and convert it to Python
     cdef RunStatistics run_statistics
     cdef Solution solution = genetic(instance, options, &run_statistics)
-    return OutputSolution(python_instance, solution.assignments, solution.value, {
-        'number_of_generations': run_statistics.number_of_generations,
-        'best_solution_fitness': run_statistics.best_solution_fitness
+    return OutputSolution(python_instance, solution.assignments, solution.value, solution.fitness(), {
+        'number_of_generations': run_statistics.number_of_generations
     })
 
 
@@ -164,25 +172,45 @@ cdef Solution genetic(Instance instance, dict options, RunStatistics* run_statis
         if generations >= options['max_generations']:
             terminate = True
 
-    run_statistics.number_of_generations = generations
-    run_statistics.best_solution_fitness = best_solution.fitness()
+    run_statistics.number_of_generations = generations - options['max_best_solution_age']
 
     return best_solution
 
 
 cdef list breed_solutions(list population, Instance instance, dict options):
     # Select parents
-    cdef Solution parent1 = c_tournament_select(population, options)
-    cdef Solution parent2 = c_tournament_select(population, options)
+
+    cdef Solution parent1
+    cdef Solution parent2
+
+    if options['selection'] == TOURNAMENT_TYPE_KNOCKOUT:
+        parent1 = tournament_select_knockout(population, options)
+        parent2 = tournament_select_knockout(population, options)
+
+    elif options['selection'] == TOURNAMENT_TYPE_POOL:
+        parent1 = tournament_select_pool(population, options)
+        parent2 = tournament_select_pool(population, options)
 
     # Crossover
-    cdef int crossover_point = random.randrange(1, instance.size() - 1)
-    cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments1 = parent1.assignments.copy()
-    cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments2 = parent2.assignments.copy()
+    cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments1
+    cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments2
+    assignments1 = parent1.assignments.copy()
+    assignments2 = parent2.assignments.copy()
+    
+    if options['crossover'] == CROSSOVER_SINGLE_POINT:
+        cdef int crossover_point = random.randrange(1, instance.size() - 1)
 
+        assignments1[crossover_point:] = parent2.assignments[crossover_point:]
+        assignments2[:crossover_point] = parent1.assignments[:crossover_point]
 
-    assignments1[crossover_point:] = parent2.assignments[crossover_point:]
-    assignments2[:crossover_point] = parent1.assignments[:crossover_point]
+    elif options['crossover'] == CROSSOVER_SWAP_MAP:
+        cdef numpy.ndarray[numpy.int8_t, ndim=1] crossover_map = generate_random_assignments(len(parent1.assignments))
+        cdef int i, tmp
+        for i in range(len(parent1.assignments)):
+            if crossover_map[i] == 1:
+                tmp = assignments1[i]
+                assignments1[i] = assignments2[i]
+                assignments2[i] = tmp
 
     # Mutate
     mutate_assignments(assignments1, options)
@@ -202,7 +230,7 @@ cdef mutate_assignments(numpy.ndarray[numpy.int8_t, ndim=1] assignments, dict op
             assignments[i] = not assignments[i]
 
 
-cdef Solution c_tournament_select(list population, dict options):
+cdef Solution tournament_select_knockout(list population, dict options):
     cdef int i
     cdef float res
     cdef int pool_size = options['tournament_pool_size']
@@ -221,7 +249,7 @@ cdef Solution c_tournament_select(list population, dict options):
         return challenger
 
 
-cdef Solution tournament_select(list population, dict options):
+cdef Solution tournament_select_pool(list population, dict options):
     cdef int i
     cdef float res
     cdef list tournament_pool = [population[random.randrange(0,len(population))] for i in range(options['tournament_pool_size'])]
@@ -235,8 +263,11 @@ cdef Solution tournament_select(list population, dict options):
 
 
 cdef Solution generate_random_solution(Instance instance, dict options):
-    cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments
-    assignments = numpy.random.choice(numpy.array([0, 1], dtype=numpy.int8), instance.num_variables)
-    cdef Solution solution = Solution(instance, assignments, options)
+    cdef Solution solution = Solution(instance, generate_random_assignments(instance.num_variables), options)
     return solution
 
+
+cdef numpy.ndarray[numpy.int8_t, ndim=1] generate_random_assignments(int size):
+    cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments
+    assignments = numpy.random.choice(numpy.array([0, 1], dtype=numpy.int8), size)
+    return assignments
