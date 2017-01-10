@@ -2,7 +2,7 @@ Ratio: 3.0
 
 _default_options = {
     'population_size': 200,
-    'mutation_probability': 0.02,
+    'bit_flip_probability': 0.02,
     'tournament_pool_size': 4,
     'tournament_win_probability': 0.9,
     'elitism_size': 7,
@@ -14,14 +14,25 @@ _default_options = {
     'crossover': CROSSOVER_SINGLE_POINT
 }
 
+No additional optimizations
+
 
 
 Medium instances:
 
-Average time: 5.91 s
-Unsolved instances: 0
-Average fitness: 497.46
-Total fitness: 24873
-Average good solution value: 497.46
+Average time: 6.47 s
+Unsolved instances: 4
+Average fitness: 493.24
+Total fitness: 24662
+Average good solution value: 536.22
+
 
 Large instances:
+
+Average time: 31.96 s
+Unsolved instances: 27
+Average fitness: 1612.02
+Total fitness: 80601
+Average good solution value: 3506.13
+
+

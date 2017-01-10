@@ -1,0 +1,100 @@
+_default_options = {
+    'population_size': 300,
+    'bit_flip_probability': 0.02,
+    'tournament_pool_size': 4,
+    'tournament_win_probability': 0.95,
+    'elitism_size': 15,
+    'max_best_solution_age': 100,
+    'max_generations': 1000,
+    'no_satisfy_penalty': 5000,
+    'random_individuals_inserted': X,
+    'selection': TOURNAMENT_TYPE_POOL,
+    'crossover': CROSSOVER_SWAP_MAP
+}
+
+Medium instances:
+
+----- Tested value: 0 --------
+Average time: 9.53 s
+Unsolved instances: 0
+Average fitness: 539.72
+Total fitness: 26986
+Average good solution value: 539.72
+
+
+----- Tested value: 5 --------
+Average time: 8.91 s
+Unsolved instances: 0
+Average fitness: 541.64
+Total fitness: 27082
+Average good solution value: 541.64
+
+
+----- Tested value: 10 --------
+Average time: 8.78 s
+Unsolved instances: 1
+Average fitness: 526.14
+Total fitness: 26307
+Average good solution value: 536.90
+
+
+----- Tested value: 20 --------
+Average time: 8.68 s
+Unsolved instances: 0
+Average fitness: 538.92
+Total fitness: 26946
+Average good solution value: 538.92
+
+
+----- Tested value: 40 --------
+Average time: 8.79 s
+Unsolved instances: 1
+Average fitness: 535.64
+Total fitness: 26782
+Average good solution value: 546.59
+
+
+Hard instances:
+
+----- Tested value: 0 --------
+Average time: 57.34 s
+Unsolved instances: 10
+Average fitness: 2851.68
+Total fitness: 142584
+Average good solution value: 3564.85
+
+
+----- Tested value: 5 --------
+Average time: 58.92 s
+Unsolved instances: 10
+Average fitness: 2903.22
+Total fitness: 145161
+Average good solution value: 3629.28
+
+----- Tested value: 10 --------
+Average time: 58.71 s
+Unsolved instances: 12
+Average fitness: 2712.98
+Total fitness: 135649
+Average good solution value: 3570.05
+
+
+----- Tested value: 20 --------
+Average time: 65.29 s
+Unsolved instances: 12
+Average fitness: 2688.46
+Total fitness: 134423
+Average good solution value: 3537.79
+
+
+----- Tested value: 40 --------
+Average time: 57.55 s
+Unsolved instances: 12
+Average fitness: 2743.74
+Total fitness: 137187
+Average good solution value: 3610.50
+
+
+
+
+

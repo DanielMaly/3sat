@@ -1,0 +1,29 @@
+_default_options = {
+    'population_size': 200,
+    'bit_flip_probability': 0.02,
+    'tournament_pool_size': 4,
+    'tournament_win_probability': 0.9,
+    'elitism_size': 7,
+    'max_best_solution_age': 100,
+    'max_generations': 1000,
+    'no_satisfy_penalty': 5000,
+    'random_individuals_inserted': 5,
+    'selection': TOURNAMENT_TYPE_POOL,
+    'crossover': CROSSOVER_SWAP_MAP
+}
+
+Medium instances:
+
+Average time: 7.29 s
+Unsolved instances: 0
+Average fitness: 541.12
+Total fitness: 27056
+Average good solution value: 541.12
+
+Hard instances:
+
+Average time: 36.24 s
+Unsolved instances: 19
+Average fitness: 2202.32
+Total fitness: 110116
+Average good solution value: 3552.77

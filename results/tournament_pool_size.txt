@@ -1,0 +1,96 @@
+_default_options = {
+    'population_size': 200,
+    'bit_flip_probability': 0.02,
+    'tournament_pool_size': X,
+    'tournament_win_probability': 0.9,
+    'elitism_size': 7,
+    'max_best_solution_age': 100,
+    'max_generations': 1000,
+    'no_satisfy_penalty': 5000,
+    'random_individuals_inserted': 5,
+    'selection': TOURNAMENT_TYPE_POOL,
+    'crossover': CROSSOVER_SWAP_MAP
+}
+
+Medium instances:
+
+----- Tested value: 2 --------
+Average time: 8.24 s
+Unsolved instances: 1
+Average fitness: 538.48
+Total fitness: 26924
+Average good solution value: 549.49
+
+
+----- Tested value: 3 --------
+Average time: 7.10 s
+Unsolved instances: 0
+Average fitness: 530.66
+Total fitness: 26533
+Average good solution value: 530.66
+
+
+----- Tested value: 4 --------
+Average time: 6.85 s
+Unsolved instances: 3
+Average fitness: 512.84
+Total fitness: 25642
+Average good solution value: 545.64
+
+
+----- Tested value: 6 --------
+Average time: 6.94 s
+Unsolved instances: 0
+Average fitness: 537.16
+Total fitness: 26858
+Average good solution value: 537.16
+
+
+----- Tested value: 8 --------
+Average time: 7.09 s
+Unsolved instances: 1
+Average fitness: 525.98
+Total fitness: 26299
+Average good solution value: 536.73
+
+
+Hard instances:
+
+----- Tested value: 2 --------
+Average time: 67.71 s
+Unsolved instances: 19
+Average fitness: 2132.16
+Total fitness: 106608
+Average good solution value: 3439.71
+
+
+----- Tested value: 3 --------
+Average time: 40.35 s
+Unsolved instances: 22
+Average fitness: 1965.96
+Total fitness: 98298
+Average good solution value: 3511.54
+
+
+----- Tested value: 4 --------
+Average time: 37.48 s
+Unsolved instances: 15
+Average fitness: 2502.02
+Total fitness: 125101
+Average good solution value: 3574.77
+
+
+----- Tested value: 6 --------
+Average time: 35.78 s
+Unsolved instances: 15
+Average fitness: 2470.80
+Total fitness: 123540
+Average good solution value: 3530.20
+
+
+----- Tested value: 8 --------
+Average time: 32.16 s
+Unsolved instances: 12
+Average fitness: 2636.94
+Total fitness: 131847
+Average good solution value: 3470.00

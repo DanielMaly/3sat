@@ -1,0 +1,139 @@
+_default_options = {
+    'population_size': 300,
+    'bit_flip_probability': 0.02,
+    'tournament_pool_size': 4,
+    'tournament_win_probability': 0.95,
+    'elitism_size': 15,
+    'max_best_solution_age': X,
+    'max_generations': 1000,
+    'no_satisfy_penalty': 5000,
+    'random_individuals_inserted': 5,
+    'selection': TOURNAMENT_TYPE_POOL,
+    'crossover': CROSSOVER_SWAP_MAP
+}
+
+Medium instances:
+
+
+Hard instances:
+
+----- Tested value: 0 --------
+Average time: 57.34 s
+Unsolved instances: 10
+Average fitness: 2851.68
+Total fitness: 142584
+Average good solution value: 3564.85
+
+
+----- Tested value: 5 --------
+Average time: 58.92 s
+Unsolved instances: 10
+Average fitness: 2903.22
+Total fitness: 145161
+Average good solution value: 3629.28
+
+
+----- Tested value: 10 --------
+Average time: 58.71 s
+Unsolved instances: 12
+Average fitness: 2712.98
+Total fitness: 135649
+Average good solution value: 3570.05
+
+
+----- Tested value: 20 --------
+Average time: 65.29 s
+Unsolved instances: 12
+Average fitness: 2688.46
+Total fitness: 134423
+Average good solution value: 3537.79
+
+
+----- Tested value: 40 --------
+Average time: 57.55 s
+Unsolved instances: 12
+Average fitness: 2743.74
+Total fitness: 137187
+Average good solution value: 3610.50
+(env_3sat)MacBook-Pro-5:3SAT dm$ python . solve instances/test_medium
+
+
+----- Tested value: 50 --------
+Average time: 5.77 s
+Unsolved instances: 0
+Average fitness: 539.60
+Total fitness: 26980
+Average good solution value: 539.60
+
+
+----- Tested value: 100 --------
+Average time: 9.23 s
+Unsolved instances: 0
+Average fitness: 546.60
+Total fitness: 27330
+Average good solution value: 546.60
+
+
+----- Tested value: 200 --------
+Average time: 17.40 s
+Unsolved instances: 0
+Average fitness: 547.78
+Total fitness: 27389
+Average good solution value: 547.78
+
+
+----- Tested value: 300 --------
+Average time: 26.28 s
+Unsolved instances: 1
+Average fitness: 536.36
+Total fitness: 26818
+Average good solution value: 547.33
+
+
+----- Tested value: 500 --------
+Average time: 39.79 s
+Unsolved instances: 1
+Average fitness: 547.48
+Total fitness: 27374
+Average good solution value: 558.67
+(env_3sat)MacBook-Pro-5:3SAT dm$ python . solve instances/test_hard
+
+
+----- Tested value: 50 --------
+Average time: 36.43 s
+Unsolved instances: 10
+Average fitness: 2841.70
+Total fitness: 142085
+Average good solution value: 3552.38
+
+
+----- Tested value: 100 --------
+Average time: 52.59 s
+Unsolved instances: 10
+Average fitness: 2897.28
+Total fitness: 144864
+Average good solution value: 3621.85
+
+
+----- Tested value: 200 --------
+Average time: 91.83 s
+Unsolved instances: 7
+Average fitness: 3114.32
+Total fitness: 155716
+Average good solution value: 3621.49
+
+
+----- Tested value: 300 --------
+Average time: 122.82 s
+Unsolved instances: 5
+Average fitness: 3229.22
+Total fitness: 161461
+Average good solution value: 3588.13
+
+
+----- Tested value: 500 --------
+Average time: 180.57 s
+Unsolved instances: 7
+Average fitness: 3086.22
+Total fitness: 154311
+Average good solution value: 3588.79

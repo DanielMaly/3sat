@@ -18,16 +18,16 @@ CROSSOVER_SWAP_MAP = 'swap_map'
 
 _default_options = {
     'population_size': 200,
-    'mutation_probability': 0.02,
+    'bit_flip_probability': 0.02,
     'tournament_pool_size': 4,
-    'tournament_win_probability': 0.9,
+    'tournament_win_probability': 0.90,
     'elitism_size': 7,
     'max_best_solution_age': 100,
     'max_generations': 1000,
     'no_satisfy_penalty': 5000,
     'random_individuals_inserted': 5,
-    'selection': TOURNAMENT_TYPE_KNOCKOUT,
-    'crossover': CROSSOVER_SINGLE_POINT
+    'selection': TOURNAMENT_TYPE_POOL,
+    'crossover': CROSSOVER_SWAP_MAP,
 }
 
 
@@ -227,7 +227,7 @@ cdef mutate_assignments(numpy.ndarray[numpy.int8_t, ndim=1] assignments, dict op
     cdef float res
     for i in range(len(assignments)):
         res = random.uniform(0, 1)
-        if options['mutation_probability'] >= res:
+        if options['bit_flip_probability'] >= res:
             assignments[i] = not assignments[i]
 
 
