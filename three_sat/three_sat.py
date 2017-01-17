@@ -54,7 +54,7 @@ def solve(in_path):
         print('ERROR: path {} not found'.format(in_path))
         return
 
-    for value in [0.0001, 0.0005, 0.001]:
+    for value in [0, 0.05, 0.1, 0.15, 0.2]:
         print('\n\n----- Tested value: {} --------'.format(value))
         total_time = 0
         total_fitness = 0
@@ -62,7 +62,7 @@ def solve(in_path):
         unsolved_instances = 0
         for instance in instances:
             start_time = time.clock()
-            solution = solve_genetic(instance, mutation_probability=value)
+            solution = solve_genetic(instance, bit_flip_flop_probability=value, bit_flip_probability=0.01)
             end_time = time.clock()
             time_taken = end_time - start_time
             total_time += time_taken

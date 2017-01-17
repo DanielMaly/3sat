@@ -19,6 +19,7 @@ CROSSOVER_SWAP_MAP = 'swap_map'
 _default_options = {
     'population_size': 200,
     'bit_flip_probability': 0.02,
+    'bit_flip_flop_probability': 0.5,
     'tournament_pool_size': 4,
     'tournament_win_probability': 0.90,
     'elitism_size': 7,
@@ -223,12 +224,25 @@ cdef list breed_solutions(list population, Instance instance, dict options):
 
 
 cdef mutate_assignments(numpy.ndarray[numpy.int8_t, ndim=1] assignments, dict options):
-    cdef int i
-    cdef float res
+    cdef int i, j, k, tmp
+    cdef float res, prob
+
+    # Bit flip
     for i in range(len(assignments)):
         res = random.uniform(0, 1)
         if options['bit_flip_probability'] >= res:
             assignments[i] = not assignments[i]
+
+    # Bit flip-flop
+    res = random.uniform(0, 1)
+    prob = options['bit_flip_flop_probability']
+    while prob >= res:
+        j = random.randrange(0, len(assignments))
+        k = random.randrange(0, len(assignments))
+        tmp = assignments[k]
+        assignments[k] = assignments[j]
+        assignments[j] = tmp
+        prob *= options['bit_flip_flop_probability']
 
 
 cdef Solution tournament_select_knockout(list population, dict options):
