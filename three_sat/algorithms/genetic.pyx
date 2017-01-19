@@ -15,20 +15,23 @@ TOURNAMENT_TYPE_POOL = 'pool'
 CROSSOVER_SINGLE_POINT = 'single_point'
 CROSSOVER_SWAP_MAP = 'swap_map'
 
+FITNESS_FUNCTION_SIMPLE = 'simple_fitness'
+FITNESS_FUNCTION_UNSATISFIED_WEIGHT = 'finer_fitness'
+
 
 _default_options = {
     'population_size': 200,
     'bit_flip_probability': 0.02,
-    'bit_flip_flop_probability': 0.5,
     'tournament_pool_size': 4,
-    'tournament_win_probability': 0.90,
-    'elitism_size': 7,
-    'max_best_solution_age': 100,
+    'tournament_win_probability': 0.95,
+    'elitism_size': 15,
+    'max_best_solution_age': 150,
     'max_generations': 1000,
     'no_satisfy_penalty': 5000,
     'random_individuals_inserted': 5,
     'selection': TOURNAMENT_TYPE_POOL,
     'crossover': CROSSOVER_SWAP_MAP,
+    'fitness': FITNESS_FUNCTION_UNSATISFIED_WEIGHT
 }
 
 
@@ -89,10 +92,16 @@ cdef class Solution:
                 self.unsatisfied_clauses += 1
 
     cpdef int fitness(self):
-        if self.unsatisfied_clauses == 0:
-            return self.value
-        else:
-            return -self.unsatisfied_clauses
+        if self.options['fitness'] == FITNESS_FUNCTION_UNSATISFIED_WEIGHT:
+            if self.unsatisfied_clauses == 0:
+                return self.value
+            else:
+                return -self.unsatisfied_clauses * self.options['no_satisfy_penalty'] + self.value
+        elif self.options['fitness'] == FITNESS_FUNCTION_SIMPLE:
+            if self.unsatisfied_clauses == 0:
+                return self.value
+            else:
+                return -self.unsatisfied_clauses
 
     def __str__(self):
         return ' '.join([str(x) for x in self.assignments])
@@ -110,6 +119,12 @@ def solve(python_instance, **kwargs):
 
     # Convert the input instance into a Cython class
     cdef Instance instance = Instance(python_instance)
+
+    # Set the no-satisfy penalty to be the sum of all weights
+    cdef int s = 0
+    for i in range(instance.num_variables):
+        s += instance.weights[i]
+    options['no_satisfy_penalty'] = s
 
     # Generate a solution and convert it to Python
     cdef RunStatistics run_statistics
@@ -232,17 +247,6 @@ cdef mutate_assignments(numpy.ndarray[numpy.int8_t, ndim=1] assignments, dict op
         res = random.uniform(0, 1)
         if options['bit_flip_probability'] >= res:
             assignments[i] = not assignments[i]
-
-    # Bit flip-flop
-    res = random.uniform(0, 1)
-    prob = options['bit_flip_flop_probability']
-    while prob >= res:
-        j = random.randrange(0, len(assignments))
-        k = random.randrange(0, len(assignments))
-        tmp = assignments[k]
-        assignments[k] = assignments[j]
-        assignments[j] = tmp
-        prob *= options['bit_flip_flop_probability']
 
 
 cdef Solution tournament_select_knockout(list population, dict options):
