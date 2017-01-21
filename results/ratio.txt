@@ -1,0 +1,76 @@
+Value: 1.0
+Average time: 3.87 s
+Unsolved instances: 0
+Average fitness: 434.68
+Total fitness: 21734
+Average good solution value: 434.68
+
+Value: 1.5
+Average time: 4.84 s
+Unsolved instances: 0
+Average fitness: 419.12
+Total fitness: 20956
+Average good solution value: 419.12
+
+Value: 2.0
+Average time: 6.07 s
+Unsolved instances: 0
+Average fitness: 384.26
+Total fitness: 19213
+Average good solution value: 384.26
+
+Value: 2.5
+Average time: 5.99 s
+Unsolved instances: 0
+Average fitness: 367.32
+Total fitness: 18366
+Average good solution value: 367.32
+
+Value: 3.0
+Average time: 6.93 s
+Unsolved instances: 4
+Average fitness: 315.26
+Total fitness: 15763
+Average good solution value: 342.76
+
+Value: 3.25
+Average time: 7.08 s
+Unsolved instances: 3
+Average fitness: 294.42
+Total fitness: 14721
+Average good solution value: 313.28
+
+Value: 3.5
+Average time: 7.82 s
+Unsolved instances: 8
+Average fitness: 262.56
+Total fitness: 13128
+Average good solution value: 312.76
+
+Value: 3.75
+Average time: 7.92 s
+Unsolved instances: 17
+Average fitness: 196.20
+Total fitness: 9810
+Average good solution value: 297.85
+
+Value: 4.0
+Average time: 8.85 s
+Unsolved instances: 16
+Average fitness: 189.26
+Total fitness: 9463
+Average good solution value: 278.88
+
+Value: 4.3
+Average time: 9.18 s
+Unsolved instances: 37
+Average fitness: 76.60
+Total fitness: 3830
+Average good solution value: 298.08
+
+Value: 5.0
+Average time: 10.44 s
+Unsolved instances: 47
+Average fitness: 15.54
+Total fitness: 777
+Average good solution value: 290.00

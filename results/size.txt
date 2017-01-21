@@ -1,0 +1,90 @@
+Value: 20
+Average time: 4.61 s
+Unsolved instances: 6
+Average fitness: 183.04
+Total fitness: 9152
+Average good solution value: 208.14
+Solution value per variable: 10.41
+
+
+Value: 30
+Average time: 7.64 s
+Unsolved instances: 5
+Average fitness: 272.08
+Total fitness: 13604
+Average good solution value: 302.42
+Solution value per variable: 10.08
+
+
+Value: 40
+Average time: 11.50 s
+Unsolved instances: 13
+Average fitness: 301.22
+Total fitness: 15061
+Average good solution value: 407.46
+Solution value per variable: 10.19
+
+
+Value: 50
+Average time: 15.56 s
+Unsolved instances: 22
+Average fitness: 298.52
+Total fitness: 14926
+Average good solution value: 534.07
+Solution value per variable: 10.68
+
+
+Value: 60
+Average time: 19.98 s
+Unsolved instances: 24
+Average fitness: 329.40
+Total fitness: 16470
+Average good solution value: 634.46
+Solution value per variable: 10.57
+
+
+Value: 70
+Average time: 23.86 s
+Unsolved instances: 26
+Average fitness: 342.56
+Total fitness: 17128
+Average good solution value: 715.00
+Solution value per variable: 10.21
+
+
+Value: 80
+Average time: 33.20 s
+Unsolved instances: 24
+Average fitness: 438.28
+Total fitness: 21914
+Average good solution value: 843.96
+Solution value per variable: 10.55
+
+
+Value: 90
+Average time: 39.64 s
+Unsolved instances: 30
+Average fitness: 367.48
+Total fitness: 18374
+Average good solution value: 921.05
+Solution value per variable: 10.23
+
+
+Value: 100
+Average time: 49.83 s
+Unsolved instances: 38
+Average fitness: 237.00
+Total fitness: 11850
+Average good solution value: 991.50
+Solution value per variable: 9.92
+
+
+20;4.61;6;183.04;208.14;10.41;
+30;7.64;5;272.08;302.42;10.08;
+40;11.50;13;301.22;407.46;10.19;
+50;15.56;22;298.52;534.07;10.68;
+60;19.98;24;329.40;634.46;10.57;
+70;23.86;26;342.56;715.00;10.21;
+80;33.20;24;438.28;843.96;10.55;
+90;39.64;30;367.48;921.05;10.23;
+100;49.83;38;237.00;991.50;9.92;

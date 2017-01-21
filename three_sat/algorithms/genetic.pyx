@@ -22,12 +22,13 @@ FITNESS_FUNCTION_UNSATISFIED_WEIGHT = 'finer_fitness'
 _default_options = {
     'population_size': 200,
     'bit_flip_probability': 0.02,
+    'bit_correction_probability': 0.25,
     'tournament_pool_size': 4,
     'tournament_win_probability': 0.95,
     'elitism_size': 15,
-    'max_best_solution_age': 150,
+    'max_best_solution_age': 100,
     'max_generations': 1000,
-    'no_satisfy_penalty': 5000,
+    'no_satisfy_penalty': 5000, # Default value is never used
     'random_individuals_inserted': 5,
     'selection': TOURNAMENT_TYPE_POOL,
     'crossover': CROSSOVER_SWAP_MAP,
@@ -76,6 +77,15 @@ cdef class Solution:
         self.options = options
         self.analyze_me()
 
+
+    cdef mutate_bit_correction(self):
+        cdef float prob = self.options['bit_correction_probability']
+        cdef float res = random.uniform(0, 1)
+        while prob >= res and self.unsatisfied_clauses > 0:
+            prob *= self.options['bit_correction_probability']
+            self.bit_correct()
+            self.analyze_me()
+
     cdef analyze_me(self):
         cdef int i, v, c, a, failed_0, failed_1, satisfies
 
@@ -90,6 +100,16 @@ cdef class Solution:
         for c in range(self.instance.num_clauses):
             if not satisfies_clause(self.instance.clauses[c], self.assignments):
                 self.unsatisfied_clauses += 1
+
+    cdef bit_correct(self):
+        cdef int i, c
+
+        # Get the first unsatisfied clause and flip a random bit
+        for c in range(self.instance.num_clauses):
+            if not satisfies_clause(self.instance.clauses[c], self.assignments):
+                i = random.randrange(0, len(self.instance.clauses[c]))
+                self.assignments[i] = not self.assignments[i]
+                return
 
     cpdef int fitness(self):
         if self.options['fitness'] == FITNESS_FUNCTION_UNSATISFIED_WEIGHT:
@@ -196,45 +216,50 @@ cdef Solution genetic(Instance instance, dict options, RunStatistics* run_statis
 cdef list breed_solutions(list population, Instance instance, dict options):
     # Select parents
 
-    cdef Solution parent1
-    cdef Solution parent2
+    cdef Solution individual1
+    cdef Solution individual2
 
     if options['selection'] == TOURNAMENT_TYPE_KNOCKOUT:
-        parent1 = tournament_select_knockout(population, options)
-        parent2 = tournament_select_knockout(population, options)
+        individual1 = tournament_select_knockout(population, options)
+        individual2 = tournament_select_knockout(population, options)
 
     elif options['selection'] == TOURNAMENT_TYPE_POOL:
-        parent1 = tournament_select_pool(population, options)
-        parent2 = tournament_select_pool(population, options)
+        individual1 = tournament_select_pool(population, options)
+        individual2 = tournament_select_pool(population, options)
 
     # Crossover
     cdef int i, tmp, crossover_point
     cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments1
     cdef numpy.ndarray[numpy.int8_t, ndim=1] assignments2
     cdef numpy.ndarray[numpy.int8_t, ndim=1] crossover_map
-    assignments1 = parent1.assignments.copy()
-    assignments2 = parent2.assignments.copy()
+    assignments1 = individual1.assignments.copy()
+    assignments2 = individual2.assignments.copy()
 
     if options['crossover'] == CROSSOVER_SINGLE_POINT:
         crossover_point = random.randrange(1, instance.size() - 1)
 
-        assignments1[crossover_point:] = parent2.assignments[crossover_point:]
-        assignments2[:crossover_point] = parent1.assignments[:crossover_point]
+        assignments1[crossover_point:] = individual2.assignments[crossover_point:]
+        assignments2[:crossover_point] = individual1.assignments[:crossover_point]
 
     elif options['crossover'] == CROSSOVER_SWAP_MAP:
-        crossover_map = generate_random_assignments(len(parent1.assignments))
-        for i in range(len(parent1.assignments)):
+        crossover_map = generate_random_assignments(len(individual1.assignments))
+        for i in range(len(individual1.assignments)):
             if crossover_map[i] == 1:
                 tmp = assignments1[i]
                 assignments1[i] = assignments2[i]
                 assignments2[i] = tmp
 
-    # Mutate
+    # Bit-flip mutate
     mutate_assignments(assignments1, options)
     mutate_assignments(assignments2, options)
 
-    # Construct solutions
-    return [Solution(instance, assignments1, options), Solution(instance, assignments2, options)]
+    # Construct solutions (with optional bit-correction)
+    individual1 = Solution(instance, assignments1, options)
+    individual1.mutate_bit_correction()
+    individual2 = Solution(instance, assignments2, options)
+    individual2.mutate_bit_correction()
+
+    return [individual1, individual2]
 
 
 
